@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).ready(function() {
     $(document).tooltip({
         show: {
             effect: "fade",
@@ -7,6 +7,19 @@ $(document).ready(function () {
         hide: {
             effect: 'fade',
             duration: 1500
+        },
+        position: {
+            my: 'left top',
+            at: 'left bottom'
+        },
+        open: function(event, ui) {
+            ui.tooltip.animate({
+                top: ui.tooltip.position().top + 10
+            }, "fast");
+            setTimeout(function() {
+                $(ui.tooltip).hide('fade');
+                $(document).tooltip("disable");
+            }, 4000);
         }
     });
     var times = ['Vasco da Gama', 'São Paulo', 'Corinthians', 'Vitória', 'Volta Redonda', 'Fluminense', 'Flamengo', 'Botafogo', 'Sport', 'Santa Cruz', 'Palmeiras', 'Santos', 'Grêmio', 'Internacional', 'Goiás', 'Vila Nova', 'Aparecidense', 'Anápolis', 'Anapolina', 'Atlético GO', 'Atlético MG', 'Real Madrid', 'Juventus', 'Barcelona', 'Manchester United', 'Manchester City', 'Liverpool', 'Chelsea', 'Paris Saint Germain', 'Borussia Dortmund', 'Bayern de Munique'];
@@ -23,15 +36,15 @@ $(document).ready(function () {
     }
 
     $("#list").autocomplete({
-        source: function (request, response) {
+        source: function(request, response) {
             // delegate back to autocomplete, but extract the last term
             response($.ui.autocomplete.filter(
-            times, extractLast(request.term)));
+                    times, extractLast(request.term)));
         },
-        focus: function (event, ui) {
+        focus: function(event, ui) {
             return false;
         },
-        select: function (event, ui) {
+        select: function(event, ui) {
             //var terms = split(this.value);
             var terms = split(this.value);
             // remove the current input
@@ -46,8 +59,8 @@ $(document).ready(function () {
         autoFocus: true,
         minLength: 1
     })
-        .autocomplete('disable')
-        .bind('keydown', function (event) {
+            .autocomplete('disable')
+            .bind('keydown', function(event) {
         if (event.keyCode === $.ui.keyCode.TAB && $(this).data("ui-autocomplete").menu.active) {
             event.preventDefault();
         }
@@ -68,7 +81,7 @@ $(document).ready(function () {
             }
         }
     })
-        .on('input focus keydown keyup', function (e) {
+            .on('input focus keydown keyup', function(e) {
         var lineLength = $(this).val().split("\n").length;
         var text = $(this).val();
         var lines = text.split(/(\r\n|\n|\r)/gm);
@@ -83,9 +96,9 @@ $(document).ready(function () {
         $(this).val(lines.join(''));
     });
     // Sobrescreve o filtro do (JQuery.UI.Autocomplete) filtrando apenas o começo da string. (prefixo)
-    $.ui.autocomplete.filter = function (array, term) {
+    $.ui.autocomplete.filter = function(array, term) {
         var matcher = new RegExp("^" + $.ui.autocomplete.escapeRegex(term), "i");
-        return $.grep(array, function (value) {
+        return $.grep(array, function(value) {
             return matcher.test(value.label || value.value || value);
         });
     };
