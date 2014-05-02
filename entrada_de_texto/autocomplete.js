@@ -1,4 +1,4 @@
-$(function() {
+$(document).ready(function() {
     var times = ['Vasco da Gama', 'São Paulo', 'Corinthians', 'Vitória', 'Volta Redonda', 'Fluminense', 'Flamengo', 'Botafogo', 'Sport', 'Santa Cruz', 'Palmeiras', 'Santos', 'Grêmio', 'Internacional', 'Goiás', 'Vila Nova', 'Aparecidense', 'Anápolis', 'Anapolina', 'Atlético GO', 'Atlético MG', 'Real Madrid', 'Juventus', 'Barcelona', 'Manchester United', 'Manchester City', 'Liverpool', 'Chelsea', 'Paris Saint Germain', 'Borussia Dortmund', 'Bayern de Munique'];
     var autocomplete = false;
     var maxChars = 40;
@@ -78,4 +78,4 @@ $(function() {
             return matcher.test(value.label || value.value || value);
         });
     };
-})();
+});
