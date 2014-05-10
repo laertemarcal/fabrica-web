@@ -24,8 +24,6 @@ $(document).ready(function() {
     });
     var times = ['Vasco da Gama', 'São Paulo', 'Corinthians', 'Vitória', 'Volta Redonda', 'Fluminense', 'Flamengo', 'Botafogo', 'Sport', 'Santa Cruz', 'Palmeiras', 'Santos', 'Grêmio', 'Internacional', 'Goiás', 'Vila Nova', 'Aparecidense', 'Anápolis', 'Anapolina', 'Atlético GO', 'Atlético MG', 'Real Madrid', 'Juventus', 'Barcelona', 'Manchester United', 'Manchester City', 'Liverpool', 'Chelsea', 'Paris Saint Germain', 'Borussia Dortmund', 'Bayern de Munique'];
     var autocomplete = false;
-    var maxChars = 40;
-    var maxLines = 5;
 
     function split(val) {
         return val.split(/ \s*/);
@@ -81,10 +79,12 @@ $(document).ready(function() {
             }
         }
     })
-            .on('input focus keydown keyup', function(e) {
+            .on('input keydown', function(e) {
         var lineLength = $(this).val().split("\n").length;
         var text = $(this).val();
         var lines = text.split(/(\r\n|\n|\r)/gm);
+        var maxChars = 40;
+        var maxLines = 5;
         if (e.keyCode === 13 && lineLength >= maxLines) {
             return false;
         }
