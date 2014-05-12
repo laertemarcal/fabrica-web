@@ -49,20 +49,20 @@ $(document).ready(function() {
         autoFocus: true,
         minLength: 1
     };
-      var options_extended = {
+    var options_extended = {
         source: function(request, response) {
             var term = $.ui.autocomplete.escapeRegex(extractLast(request.term))
-                // Create two regular expressions, one to find suggestions starting with the user's input:
-                , startsWithMatcher = new RegExp("^" + term, "i")
-                , startsWith = $.grep(times, function(value) {
-                    return startsWithMatcher.test(value.label || value.value || value);
-                })
-                // ... And another to find suggestions that just contain the user's input:
-                , containsMatcher = new RegExp(term, "i")
-                , contains = $.grep(times, function (value) {
-                    return $.inArray(value, startsWith) < 0 &&
+                    // Create two regular expressions, one to find suggestions starting with the user's input:
+                    , startsWithMatcher = new RegExp("^" + term, "i")
+                    , startsWith = $.grep(times, function(value) {
+                return startsWithMatcher.test(value.label || value.value || value);
+            })
+                    // ... And another to find suggestions that just contain the user's input:
+                    , containsMatcher = new RegExp(term, "i")
+                    , contains = $.grep(times, function(value) {
+                return $.inArray(value, startsWith) < 0 &&
                         containsMatcher.test(value.label || value.value || value);
-                });            
+            });
 
             // Supply the widget with an array containing the suggestions that start with the user's input,
             // followed by those that just contain the user's input.
@@ -93,7 +93,7 @@ $(document).ready(function() {
     function extractLast(term) {
         return split(term).pop();
     }
-    
+
 //    $("#list").autocomplete({
 //        source: function(request, response) {
 //            // delegate back to autocomplete, but extract the last term
@@ -118,7 +118,7 @@ $(document).ready(function() {
 //        autoFocus: true,
 //        minLength: 1
 //    })
-            $("#list").autocomplete(options)
+    $("#list").autocomplete(options)
             .autocomplete('disable')
             .bind('keydown', function(event) {
         if (!event)
@@ -144,6 +144,10 @@ $(document).ready(function() {
                 autocomplete = true;
             }
             return false;
+        }
+        if (event.ctrlKey && event.keyCode === 90) { //pega CTRL + Z
+            event.preventDefault();
+            document.execCommand('undo', false, null);
         }
         //Detecta se APENAS espaço foi pressionado e desabilita o autocomplete.
         if (!event.ctrlKey && event.keyCode === 32) {
