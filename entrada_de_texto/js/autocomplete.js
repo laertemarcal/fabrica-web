@@ -22,18 +22,10 @@ $(document).ready(function() {
             }, 4000);
         }
     });
+    var times_extended = times;
     var times = ['Vasco da Gama', 'São Paulo', 'Corinthians', 'Vitória', 'Volta Redonda', 'Fluminense', 'Flamengo', 'Botafogo', 'Sport', 'Santa Cruz', 'Palmeiras', 'Santos', 'Grêmio', 'Internacional', 'Goiás', 'Vila Nova', 'Aparecidense', 'Anápolis', 'Anapolina', 'Atlético GO', 'Atlético MG', 'Real Madrid', 'Juventus', 'Barcelona', 'Manchester United', 'Manchester City', 'Liverpool', 'Chelsea', 'Paris Saint Germain', 'Borussia Dortmund', 'Bayern de Munique'];
     var autocomplete = false;
-
-    function split(val) {
-        return val.split(/ \s*/);
-    }
-
-    function extractLast(term) {
-        return split(term).pop();
-    }
-
-    $("#list").autocomplete({
+    var options = {
         source: function(request, response) {
             // delegate back to autocomplete, but extract the last term
             response($.ui.autocomplete.filter(
@@ -43,9 +35,6 @@ $(document).ready(function() {
             event.preventDefault();
         },
         select: function(event, ui) {
-            if (event.keyCode === $.ui.keyCode.TAB) {
-                event.stopPropagation();
-            }
             //var terms = split(this.value);
             var terms = split(this.value);
             // remove the current input
@@ -59,9 +48,81 @@ $(document).ready(function() {
         },
         autoFocus: true,
         minLength: 1
-    })
+    };
+      var options_extended = {
+        source: function(request, response) {
+            var term = $.ui.autocomplete.escapeRegex(extractLast(request.term))
+                // Create two regular expressions, one to find suggestions starting with the user's input:
+                , startsWithMatcher = new RegExp("^" + term, "i")
+                , startsWith = $.grep(times, function(value) {
+                    return startsWithMatcher.test(value.label || value.value || value);
+                })
+                // ... And another to find suggestions that just contain the user's input:
+                , containsMatcher = new RegExp(term, "i")
+                , contains = $.grep(times, function (value) {
+                    return $.inArray(value, startsWith) < 0 &&
+                        containsMatcher.test(value.label || value.value || value);
+                });            
+
+            // Supply the widget with an array containing the suggestions that start with the user's input,
+            // followed by those that just contain the user's input.
+            response(startsWith.concat(contains));
+        },
+        focus: function(event, ui) {
+            event.preventDefault();
+        },
+        select: function(event, ui) {
+            //var terms = split(this.value);
+            var terms = split(this.value);
+            // remove the current input
+            terms.pop();
+            // add the selected item
+            terms.push(ui.item.value);
+            // add placeholder to get the comma-and-space at the end
+            terms.push("");
+            this.value = terms.join(" ");
+            return false;
+        },
+        autoFocus: true,
+        minLength: 1
+    };
+    function split(val) {
+        return val.split(/ \s*/);
+    }
+
+    function extractLast(term) {
+        return split(term).pop();
+    }
+    
+//    $("#list").autocomplete({
+//        source: function(request, response) {
+//            // delegate back to autocomplete, but extract the last term
+//            response($.ui.autocomplete.filter(
+//                    times, extractLast(request.term)));
+//        },
+//        focus: function(event, ui) {
+//            event.preventDefault();
+//        },
+//        select: function(event, ui) {
+//            //var terms = split(this.value);
+//            var terms = split(this.value);
+//            // remove the current input
+//            terms.pop();
+//            // add the selected item
+//            terms.push(ui.item.value);
+//            // add placeholder to get the comma-and-space at the end
+//            terms.push("");
+//            this.value = terms.join(" ");
+//            return false;
+//        },
+//        autoFocus: true,
+//        minLength: 1
+//    })
+            $("#list").autocomplete(options)
             .autocomplete('disable')
-        .bind('keydown', function(event) {
+            .bind('keydown', function(event) {
+        if (!event)
+            event = window.event;
         var isOpen = $(this).data("ui-autocomplete").menu.element.is(":visible");
         if (event.keyCode === $.ui.keyCode.TAB) {
             if (isOpen) {
@@ -72,9 +133,16 @@ $(document).ready(function() {
         }
         //Detecta se CTRL+SPACE foi pressionado e habilita o autocomplete.
         if (event.ctrlKey && event.keyCode === 32) {
-            $(this).autocomplete('enable');
-            $(this).autocomplete('search');
-            autocomplete = true;
+            if (autocomplete) {
+                $(this).autocomplete(options_extended);
+                $(this).autocomplete('search');
+                autocomplete = false;
+            } else {
+                $(this).autocomplete(options);
+                $(this).autocomplete('enable');
+                $(this).autocomplete('search');
+                autocomplete = true;
+            }
             return false;
         }
         //Detecta se APENAS espaço foi pressionado e desabilita o autocomplete.
