@@ -32,6 +32,8 @@ $(document).ready(function() {
         },
         focus: function(event, ui) {
             event.preventDefault();
+            console.log('teste');
+            focusIndex = $.inArray(ui.item.value, times);
         },
         select: function(event, ui) {
             //var terms = split(this.value);
@@ -105,7 +107,7 @@ $(document).ready(function() {
 //    })
     $("#list").autocomplete(options)
             .autocomplete('disable')
-            .bind('keydown', function(event, ui) {
+            .bind('keydown', function(event) {
         if (!event)
             event = window.event;
         var isOpen = $(this).data("ui-autocomplete").menu.element.is(":visible");
@@ -134,6 +136,7 @@ $(document).ready(function() {
             var menu = $(this).data("ui-autocomplete").menu.element;
             var focused = menu.find("li:has(a.ui-state-focus)");
             focused.remove(); //remove da lista
+            times.splice(focusIndex, 1);
         }
         if (event.ctrlKey && event.keyCode === 90) { //pega CTRL + Z
             event.preventDefault();
