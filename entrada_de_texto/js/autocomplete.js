@@ -22,7 +22,6 @@ $(document).ready(function() {
             }, 4000);
         }
     });
-    var times_extended = times;
     var times = ['Vasco da Gama', 'São Paulo', 'Corinthians', 'Vitória', 'Volta Redonda', 'Fluminense', 'Flamengo', 'Botafogo', 'Sport', 'Santa Cruz', 'Palmeiras', 'Santos', 'Grêmio', 'Internacional', 'Goiás', 'Vila Nova', 'Aparecidense', 'Anápolis', 'Anapolina', 'Atlético GO', 'Atlético MG', 'Real Madrid', 'Juventus', 'Barcelona', 'Manchester United', 'Manchester City', 'Liverpool', 'Chelsea', 'Paris Saint Germain', 'Borussia Dortmund', 'Bayern de Munique'];
     var autocomplete = false;
     var options = {
@@ -51,22 +50,8 @@ $(document).ready(function() {
     };
     var options_extended = {
         source: function(request, response) {
-            var term = $.ui.autocomplete.escapeRegex(extractLast(request.term))
-                    // Create two regular expressions, one to find suggestions starting with the user's input:
-                    , startsWithMatcher = new RegExp("^" + term, "i")
-                    , startsWith = $.grep(times, function(value) {
-                return startsWithMatcher.test(value.label || value.value || value);
-            })
-                    // ... And another to find suggestions that just contain the user's input:
-                    , containsMatcher = new RegExp(term, "i")
-                    , contains = $.grep(times, function(value) {
-                return $.inArray(value, startsWith) < 0 &&
-                        containsMatcher.test(value.label || value.value || value);
-            });
-
-            // Supply the widget with an array containing the suggestions that start with the user's input,
-            // followed by those that just contain the user's input.
-            response(startsWith.concat(contains));
+            response($.ui.autocomplete.filter(
+                    times, extractLast(request.term)));
         },
         focus: function(event, ui) {
             event.preventDefault();
@@ -120,7 +105,7 @@ $(document).ready(function() {
 //    })
     $("#list").autocomplete(options)
             .autocomplete('disable')
-            .bind('keydown', function(event) {
+            .bind('keydown', function(event, ui) {
         if (!event)
             event = window.event;
         var isOpen = $(this).data("ui-autocomplete").menu.element.is(":visible");
@@ -144,6 +129,11 @@ $(document).ready(function() {
                 autocomplete = true;
             }
             return false;
+        }
+        if (event.keyCode === 46) { //listener da tecla DELETE
+            var menu = $(this).data("ui-autocomplete").menu.element;
+            var focused = menu.find("li:has(a.ui-state-focus)");
+            focused.remove(); //remove da lista
         }
         if (event.ctrlKey && event.keyCode === 90) { //pega CTRL + Z
             event.preventDefault();
