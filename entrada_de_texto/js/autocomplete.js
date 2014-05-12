@@ -40,9 +40,12 @@ $(document).ready(function() {
                     times, extractLast(request.term)));
         },
         focus: function(event, ui) {
-            return false;
+            event.preventDefault();
         },
         select: function(event, ui) {
+            if (event.keyCode === $.ui.keyCode.TAB) {
+                event.stopPropagation();
+            }
             //var terms = split(this.value);
             var terms = split(this.value);
             // remove the current input
@@ -58,9 +61,14 @@ $(document).ready(function() {
         minLength: 1
     })
             .autocomplete('disable')
-            .bind('keydown', function(event) {
-        if (event.keyCode === $.ui.keyCode.TAB && $(this).data("ui-autocomplete").menu.active) {
-            event.preventDefault();
+        .bind('keydown', function(event) {
+        var isOpen = $(this).data("ui-autocomplete").menu.element.is(":visible");
+        if (event.keyCode === $.ui.keyCode.TAB) {
+            if (isOpen) {
+                $(this).data("ui-autocomplete")._keyEvent("next", event);
+                event.stopImmediatePropagation();
+                event.preventDefault();
+            }
         }
         //Detecta se CTRL+SPACE foi pressionado e habilita o autocomplete.
         if (event.ctrlKey && event.keyCode === 32) {
