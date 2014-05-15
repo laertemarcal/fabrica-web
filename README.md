@@ -1,5 +1,4 @@
 fabrica-web
 ===========
 
-Repositório referente aos projetos da matéria de Desenvolvimento Web da Fábrica de Software INF/UFG
-*Criação do repositório
+Repositório referente ao projeto C - Entrada de Texto da matéria de Desenvolvimento Web da Fábrica de Software INF/UFG
